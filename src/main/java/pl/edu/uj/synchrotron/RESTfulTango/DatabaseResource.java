@@ -126,7 +126,7 @@ public class DatabaseResource implements TangoConst {
 	}
 
 	@GET
-	@Path("/SortedDeviceList.json/{sorting_type}/{trackStatus}")
+	@Path("/SortedDeviceList/{sorting_type}/{trackStatus}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(
 			value = "List and sort all devices",
@@ -168,11 +168,11 @@ public class DatabaseResource implements TangoConst {
 									try {
 										dp = new DeviceProxy(arg.svalue[j], host, port);
 										dp.ping();
-										retJSONObject.put(classes[i].toUpperCase() + "isDeviceAlive" + j, true);
+										retJSONObject.put(classes[i] + "isDeviceAlive" + j, true);
 										// System.out.println("Device "+classes[j]+"is alive");
 									} catch (DevFailed e) {
 										e.printStackTrace();
-										retJSONObject.put(classes[i].toUpperCase() + "isDeviceAlive" + j, false);
+										retJSONObject.put(classes[i] + "isDeviceAlive" + j, false);
 									}
 								}
 								// System.out.print("	Device[" + device_count + "]: " + arg.svalue[j]);
@@ -1192,7 +1192,7 @@ public class DatabaseResource implements TangoConst {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/Device/{domain}/{class}/{member}/plot_attribute.json/{att_name}")
+	@Path("/Device/{domain}/{class}/{member}/plot_attribute/{att_name}")
 	@ApiOperation(
 			value = "Read attribute values",
 			notes = "Reads attribute and returns its values as array or set of arrays depending if attribute is of type SPECTRUM or IMAGE.")
