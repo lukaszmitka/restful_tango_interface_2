@@ -44,7 +44,9 @@
 		</init-param>
 		<init-param>
 			<param-name>swagger.api.basepath</param-name>
-			<param-value>http://localhost:8080/Tango/rest</param-value>
+			<!-- Adjust this line to your server address, in other case Swagger will 
+				run, but you will not be able to test commands -->
+			<param-value>https://192.168.105.140/Tango/rest</param-value>
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
