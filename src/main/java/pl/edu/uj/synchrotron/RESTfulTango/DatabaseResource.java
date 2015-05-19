@@ -19,8 +19,6 @@ import org.codehaus.jettison.json.JSONObject;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
 
 import fr.esrf.Tango.AttrDataFormat;
 import fr.esrf.Tango.AttrQuality;
@@ -59,7 +57,6 @@ public class DatabaseResource implements TangoConst {
 					value = "Port of Tango database", required = true) @PathParam("port") String port) {
 		String retStr = "<html><title>Device</title><body><h1>Device list:</h1>";
 		String devices[];
-		getHostFromEnv();
 		try {
 			System.out.println("Connecting to database at: " + host + ":" + port);
 			Database db = ApiUtil.get_db_obj(host, port);
@@ -1013,6 +1010,8 @@ public class DatabaseResource implements TangoConst {
 						retJSONObject.put("attWritable" + i, isWritable(ai)); //
 						System.out.println("Getting attribute isPlottable");
 						retJSONObject.put("attPlotable" + i, isPlotable(ai)); //
+						System.out.println("Getting attribute isNumeric");
+						retJSONObject.put("isNumeric"+i, isNumeric(ai));
 						System.out.println("Getting attribute description");
 						retJSONObject.put("attDesc" + i, "Name: " + ai.name + "\n" + "Label: " + ai.label + "\n"
 								+ "Writable: " + getWriteString(ai) + "\n" + "Data format: " + getFormatString(ai) + "\n"
@@ -1029,6 +1028,7 @@ public class DatabaseResource implements TangoConst {
 						retJSONObject.put("attWritable" + i, false);
 						retJSONObject.put("attPlotable" + i, false);
 						retJSONObject.put("attDesc" + i, e.getMessage());
+						retJSONObject.put("isNumeric"+i, false);
 					}
 				}
 				retJSONObject.put("connectionStatus", "OK");
@@ -1777,7 +1777,12 @@ public class DatabaseResource implements TangoConst {
 					if (ai.data_format.value() == AttrDataFormat._SCALAR) {
 						ret_string.append(data.extractState());
 					} else {
-						ret_string.append("Too many values!");
+						DevState[] dummy = data.extractDevStateArray();
+						int nbRead = data.getNbRead();
+						int start = getLimitMin(checkLimit, ret_string, nbRead);
+						int end = getLimitMax(checkLimit, ret_string, nbRead, false);
+						for (int i = start; i < end; i++)
+							printValuesOnly(ret_string, i, printIndex, Tango_DevStateName[dummy[i].value()], false);
 					}
 				}
 					break;
@@ -1786,7 +1791,12 @@ public class DatabaseResource implements TangoConst {
 						short dummy = data.extractUChar();
 						ret_string.append(Short.toString(dummy));
 					} else {
-						ret_string.append("Too many values!");
+						short[] dummy = data.extractUCharArray();
+						int nbRead = data.getNbRead();
+						int start = getLimitMin(checkLimit, ret_string, nbRead);
+						int end = getLimitMax(checkLimit, ret_string, nbRead, false);
+						for (int i = start; i < end; i++)
+							printValuesOnly(ret_string, i, printIndex, Short.toString(dummy[i]), false);
 					}
 				}
 					break;
@@ -1795,7 +1805,12 @@ public class DatabaseResource implements TangoConst {
 						short dummy = data.extractShort();
 						ret_string.append(Short.toString(dummy));
 					} else {
-						ret_string.append("Too many values!");
+						short[] dummy = data.extractShortArray();
+						int nbRead = data.getNbRead();
+						int start = getLimitMin(checkLimit, ret_string, nbRead);
+						int end = getLimitMax(checkLimit, ret_string, nbRead, false);
+						for (int i = start; i < end; i++)
+							printValuesOnly(ret_string, i, printIndex, Short.toString(dummy[i]), false);
 					}
 				}
 					break;
@@ -1804,7 +1819,12 @@ public class DatabaseResource implements TangoConst {
 						boolean dummy = data.extractBoolean();
 						ret_string.append(Boolean.toString(dummy));
 					} else {
-						ret_string.append("Too many values!");
+						boolean[] dummy = data.extractBooleanArray();
+						int nbRead = data.getNbRead();
+						int start = getLimitMin(checkLimit, ret_string, nbRead);
+						int end = getLimitMax(checkLimit, ret_string, nbRead, false);
+						for (int i = start; i < end; i++)
+							printValuesOnly(ret_string, i, printIndex, Boolean.toString(dummy[i]), false);
 					}
 				}
 					break;
@@ -1813,7 +1833,12 @@ public class DatabaseResource implements TangoConst {
 						int dummy = data.extractUShort();
 						ret_string.append(Integer.toString(dummy));
 					} else {
-						ret_string.append("Too many values!");
+						int[] dummy = data.extractUShortArray();
+						int nbRead = data.getNbRead();
+						int start = getLimitMin(checkLimit, ret_string, nbRead);
+						int end = getLimitMax(checkLimit, ret_string, nbRead, false);
+						for (int i = start; i < end; i++)
+							printValuesOnly(ret_string, i, printIndex, Integer.toString(dummy[i]), false);
 					}
 				}
 					break;
@@ -1822,7 +1847,12 @@ public class DatabaseResource implements TangoConst {
 						int dummy = data.extractLong();
 						ret_string.append(Integer.toString(dummy));
 					} else {
-						ret_string.append("Too many values!");
+						int[] dummy = data.extractLongArray();
+						int nbRead = data.getNbRead();
+						int start = getLimitMin(checkLimit, ret_string, nbRead);
+						int end = getLimitMax(checkLimit, ret_string, nbRead, false);
+						for (int i = start; i < end; i++)
+							printValuesOnly(ret_string, i, printIndex, Integer.toString(dummy[i]), false);
 					}
 				}
 					break;
@@ -1831,7 +1861,12 @@ public class DatabaseResource implements TangoConst {
 						long dummy = data.extractULong();
 						ret_string.append(Long.toString(dummy));
 					} else {
-						ret_string.append("Too many values!");
+						long[] dummy = data.extractULongArray();
+						int nbRead = data.getNbRead();
+						int start = getLimitMin(checkLimit, ret_string, nbRead);
+						int end = getLimitMax(checkLimit, ret_string, nbRead, false);
+						for (int i = start; i < end; i++)
+							printValuesOnly(ret_string, i, printIndex, Long.toString(dummy[i]), false);
 					}
 				}
 					break;
@@ -1840,7 +1875,12 @@ public class DatabaseResource implements TangoConst {
 						long dummy = data.extractLong64();
 						ret_string.append(Long.toString(dummy));
 					} else {
-						ret_string.append("Too many values!");
+						long[] dummy = data.extractLong64Array();
+						int nbRead = data.getNbRead();
+						int start = getLimitMin(checkLimit, ret_string, nbRead);
+						int end = getLimitMax(checkLimit, ret_string, nbRead, false);
+						for (int i = start; i < end; i++)
+							printValuesOnly(ret_string, i, printIndex, Long.toString(dummy[i]), false);
 					}
 				}
 					break;
@@ -1849,7 +1889,12 @@ public class DatabaseResource implements TangoConst {
 						long dummy = data.extractULong64();
 						ret_string.append(Long.toString(dummy));
 					} else {
-						ret_string.append("Too many values!");
+						long[] dummy = data.extractULong64Array();
+						int nbRead = data.getNbRead();
+						int start = getLimitMin(checkLimit, ret_string, nbRead);
+						int end = getLimitMax(checkLimit, ret_string, nbRead, false);
+						for (int i = start; i < end; i++)
+							printValuesOnly(ret_string, i, printIndex, Long.toString(dummy[i]), false);
 					}
 				}
 					break;
@@ -1858,7 +1903,12 @@ public class DatabaseResource implements TangoConst {
 						double dummy = data.extractDouble();
 						ret_string.append(Double.toString(dummy));
 					} else {
-						ret_string.append("Too many values!");
+						double[] dummy = data.extractDoubleArray();
+						int nbRead = data.getNbRead();
+						int start = getLimitMin(checkLimit, ret_string, nbRead);
+						int end = getLimitMax(checkLimit, ret_string, nbRead, false);
+						for (int i = start; i < end; i++)
+							printValuesOnly(ret_string, i, printIndex, Double.toString(dummy[i]), false);
 					}
 				}
 					break;
@@ -1867,7 +1917,12 @@ public class DatabaseResource implements TangoConst {
 						float dummy = data.extractFloat();
 						ret_string.append(Float.toString(dummy));
 					} else {
-						ret_string.append("Too many values!");
+						float[] dummy = data.extractFloatArray();
+						int nbRead = data.getNbRead();
+						int start = getLimitMin(checkLimit, ret_string, nbRead);
+						int end = getLimitMax(checkLimit, ret_string, nbRead, false);
+						for (int i = start; i < end; i++)
+							printValuesOnly(ret_string, i, printIndex, Float.toString(dummy[i]), false);
 					}
 				}
 					break;
@@ -1876,7 +1931,12 @@ public class DatabaseResource implements TangoConst {
 						String dummy = data.extractString();
 						ret_string.append(dummy);
 					} else {
-						ret_string.append("Too many values!");
+						String[] dummy = data.extractStringArray();
+						int nbRead = data.getNbRead();
+						int start = getLimitMin(checkLimit, ret_string, nbRead);
+						int end = getLimitMax(checkLimit, ret_string, nbRead, false);
+						for (int i = start; i < end; i++)
+							printValuesOnly(ret_string, i, printIndex, dummy[i], false);
 					}
 				}
 					break;
@@ -2799,20 +2859,41 @@ public class DatabaseResource implements TangoConst {
 			return false;
 		return (ai.data_format.value() == AttrDataFormat._SPECTRUM) || (ai.data_format.value() == AttrDataFormat._IMAGE);
 	}
-
-	private void getHostFromEnv() {
-		/*
-		 * String envName = "TANGO_HOST"; String value = System.getenv(envName);
-		 * if (value != null) { System.out.format("%s=%s%n", envName, value);
-		 * String[] tangoHost = value.split(":"); if (tangoHost.length == 2) {
-		 * host = tangoHost[0]; port = tangoHost[1];
-		 * System.out.println("Using new host value: " + host + ":" + port); }
-		 * else { System.out.println(envName +
-		 * " not set correctly, should be in form: \"hostname:port\""); } } else
-		 * { System.out.format("%s not set. Using previously set host: %s:%s%n",
-		 * envName, host, port);
-		 * 
-		 * }
-		 */
+	
+	/**
+	 * Check if attribute has numeric value.
+	 * 
+	 * @param ai
+	 *           Attribute to be checked.
+	 * @return True when attribute can be plotted.
+	 */
+	private boolean isNumeric(AttributeInfo ai) {
+		if ((ai.data_type == Tango_DEV_STRING) || (ai.data_type == Tango_DEV_STATE)
+				|| (ai.data_type == Tango_DEV_BOOLEAN))
+			return false;
+		return true;
+	}
+	
+	/**
+	 * Parses string to be printed
+	 *
+	 * @param str       String to be printed.
+	 * @param idx       Number of value in array.
+	 * @param printIdx  Defines if array has more than one value.
+	 * @param value     Value that was read/written.
+	 * @param writeable Defines if value is writable.
+	 */
+	static void printValuesOnly(StringBuffer str, int idx, boolean printIdx, String value, boolean writeable) {
+		if (!writeable) {
+			if (printIdx)
+				str.append(value + ", ");
+			else
+				str.append(value + ", ");
+		} else {
+			if (printIdx)
+				str.append("Set [" + idx + "]" + value + "");
+			else
+				str.append("Set:\t" + value + "");
+		}
 	}
 }
